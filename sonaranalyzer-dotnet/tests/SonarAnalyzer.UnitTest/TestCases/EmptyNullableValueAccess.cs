@@ -117,4 +117,20 @@ namespace Tests.Diagnostics
             }
         }
     }
+
+    public class C
+    {
+        public int M<T>()
+        {
+            switch (typeof(T))
+            {
+                case var x when x == typeof(Foo): return 1;
+                case var x when x == typeof(Bar): return 2;
+                default: throw new InvalidOperationException();
+            }
+        }
+    }
+
+    public class Foo { }
+    public class Bar { }
 }
