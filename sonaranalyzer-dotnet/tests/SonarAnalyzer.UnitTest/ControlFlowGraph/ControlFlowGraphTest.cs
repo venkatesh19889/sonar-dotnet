@@ -2086,6 +2086,7 @@ namespace NS
         #endregion
 
         #region Try/Finally
+
         [TestMethod]
         [TestCategory("CFG")]
         public void Cfg_Try_Finally()
@@ -2982,7 +2983,7 @@ namespace NS
 
         [TestMethod]
         [TestCategory("CFG")]
-        public void Cfg_TryFinally_Inside_DoWhile_WithThrow_InsideCatch()
+        public void Cfg_TryFinally_Inside_DoWhile()
         {
             var cfg = Build(@"
             var attempts = 0;
@@ -3038,8 +3039,6 @@ namespace NS
 
             exit.Should().BeOfType<ExitBlock>();
         }
-
-
 
         [TestMethod]
         [TestCategory("CFG")]
