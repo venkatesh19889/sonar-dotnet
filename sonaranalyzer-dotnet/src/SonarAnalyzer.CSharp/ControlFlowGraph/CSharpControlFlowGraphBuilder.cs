@@ -569,6 +569,7 @@ namespace SonarAnalyzer.ControlFlowGraph.CSharp
             }
             else
             {
+                // TODO do not create block before the jump statements...
                 tryBody = BuildBlock(tryStatement.Block, CreateBranchBlock(tryStatement,
                     tryEndStatementConnections.Distinct()));
             }
@@ -764,16 +765,21 @@ namespace SonarAnalyzer.ControlFlowGraph.CSharp
                 throw new InvalidOperationException("break; outside a loop");
             }
 
-            var target = this.BreakTarget.Peek();
-            if (currentBlock is BranchBlock possibleTryBlock &&
-                possibleTryBlock.BranchingNode.IsKind(SyntaxKind.TryStatement))
+            var breakTarget = this.BreakTarget.Peek();
+            if (currentBlock is BranchBlock tryBlock &&
+                tryBlock.BranchingNode.IsKind(SyntaxKind.TryStatement))
             {
-                var newSuccessors = possibleTryBlock.SuccessorBlocks.ToList();
-                newSuccessors.Add(target);
-                var branchBlock = CreateBranchBlock(possibleTryBlock.BranchingNode, newSuccessors);
+                var breakSuccessors = new List<Block>();
+                breakSuccessors.Add(breakTarget);
+                var finallyBlock = tryBlock.SuccessorBlocks.FirstOrDefault(b => b is BranchBlock bb && bb.BranchingNode is FinallyClauseSyntax);
+                if (finallyBlock != null)
+                {
+                    breakSuccessors.Add(finallyBlock);
+                }
+                var branchBlock = CreateBranchBlock(breakStatement, breakSuccessors);
                 return branchBlock;
             }
-            return CreateJumpBlock(breakStatement, target, currentBlock);
+            return CreateJumpBlock(breakStatement, breakTarget, currentBlock);
         }
 
         private Block BuildContinueStatement(ContinueStatementSyntax continueStatement, Block currentBlock)
