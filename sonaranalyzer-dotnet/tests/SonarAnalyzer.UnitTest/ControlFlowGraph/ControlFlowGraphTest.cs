@@ -4343,7 +4343,7 @@ namespace NS
         internal static MethodDeclarationSyntax CompileWithMethodBody(string input, string methodName,
             out SemanticModel semanticModel, ParseOptions parseOptions = null)
         {
-            parseOptions = parseOptions ?? new CSharpParseOptions(LanguageVersion.CSharp7);
+            parseOptions = parseOptions ?? new CSharpParseOptions(LanguageVersion.Preview);
 
             using (var workspace = new AdhocWorkspace())
             {

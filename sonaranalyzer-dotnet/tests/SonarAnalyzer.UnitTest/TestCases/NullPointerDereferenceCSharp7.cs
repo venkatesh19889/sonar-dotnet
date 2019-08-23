@@ -239,4 +239,16 @@ namespace Tests.Diagnostics
       var s = obj.ToString();
     }
   }
+
+    class NullString
+    {
+        void Demo()
+        {
+            string? s = null;
+            Console.WriteLine(s.Length); // Noncompliant
+
+            string s1 = null;
+            Console.WriteLine(s1.Length);
+        }
+    }
 }

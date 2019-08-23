@@ -88,14 +88,18 @@ namespace SonarAnalyzer.UnitTest.TestFramework
                 new CS.CSharpParseOptions(CS.LanguageVersion.CSharp7),
                 new CS.CSharpParseOptions(CS.LanguageVersion.CSharp7_1),
                 new CS.CSharpParseOptions(CS.LanguageVersion.CSharp7_2),
-                new CS.CSharpParseOptions(CS.LanguageVersion.CSharp7_3));
+                new CS.CSharpParseOptions(CS.LanguageVersion.CSharp7_3),
+                 new CS.CSharpParseOptions(CS.LanguageVersion.CSharp8),
+                new CS.CSharpParseOptions(CS.LanguageVersion.Preview));
 
         public static IEnumerable<ParseOptions> FromCSharp7 { get; } =
             ImmutableArray.Create(
                 new CS.CSharpParseOptions(CS.LanguageVersion.CSharp7),
                 new CS.CSharpParseOptions(CS.LanguageVersion.CSharp7_1),
                 new CS.CSharpParseOptions(CS.LanguageVersion.CSharp7_2),
-                new CS.CSharpParseOptions(CS.LanguageVersion.CSharp7_3));
+                new CS.CSharpParseOptions(CS.LanguageVersion.CSharp7_3),
+                new CS.CSharpParseOptions(CS.LanguageVersion.CSharp8),
+                new CS.CSharpParseOptions(CS.LanguageVersion.Preview));
 
         public static IEnumerable<ParseOptions> FromVisualBasic15 { get; } =
             ImmutableArray.Create(

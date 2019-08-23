@@ -115,7 +115,7 @@ namespace SonarAnalyzer.UnitTest.Performance
                 new string[] { @"TestCases\Performance\Bug2474_EntityFrameworkMigration.cs" },
                 additionalReferences: GetEntityFrameworkReferencesNetCore("2.0.0"));
 
-            var compilation = solutionBuilder.Compile(new CSharpParseOptions(LanguageVersion.Latest)).Single();
+            var compilation = solutionBuilder.Compile(new CSharpParseOptions(LanguageVersion.Preview)).Single();
             return compilation;
         }
 

@@ -19,9 +19,12 @@
  */
 
 extern alias csharp;
+
+using System.Collections.Immutable;
 using csharp::SonarAnalyzer.Rules.CSharp;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SonarAnalyzer.UnitTest.TestFramework;
+using CS = Microsoft.CodeAnalysis.CSharp;
 
 namespace SonarAnalyzer.UnitTest.Rules
 {
@@ -84,7 +87,9 @@ public static class Utils
         {
             Verifier.VerifyAnalyzer(@"TestCases\NullPointerDereferenceCSharp7.cs",
                 new NullPointerDereference(),
-                ParseOptionsHelper.FromCSharp7);
+                ImmutableArray.Create(
+                new CS.CSharpParseOptions(CS.LanguageVersion.CSharp8),
+                new CS.CSharpParseOptions(CS.LanguageVersion.Preview)));
         }
     }
 }
