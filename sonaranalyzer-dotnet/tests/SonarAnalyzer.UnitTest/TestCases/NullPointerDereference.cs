@@ -756,4 +756,13 @@ namespace Tests.Diagnostics
             return s.Trim(); // Noncompliant FP due to loop traversal
         }
     }
+
+    class Demo
+    {
+        void Foo()
+        {
+            string s = null;
+            Console.WriteLine(s.Length); // Noncompliant
+        }
+    }
 }
