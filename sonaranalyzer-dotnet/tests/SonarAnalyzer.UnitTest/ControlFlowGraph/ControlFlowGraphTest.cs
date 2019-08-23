@@ -4341,9 +4341,9 @@ namespace NS
 }}";
 
         internal static MethodDeclarationSyntax CompileWithMethodBody(string input, string methodName,
-            out SemanticModel semanticModel, ParseOptions parseOptions = null)
+            out SemanticModel semanticModel)
         {
-            parseOptions = parseOptions ?? new CSharpParseOptions(LanguageVersion.Preview);
+            var parseOptions = new CSharpParseOptions(LanguageVersion.Preview);
 
             using (var workspace = new AdhocWorkspace())
             {

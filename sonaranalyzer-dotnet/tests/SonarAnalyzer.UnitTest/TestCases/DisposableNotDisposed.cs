@@ -113,5 +113,13 @@ namespace Tests.Diagnostics
         {
             // do nothing
         }
+
+        public void DisposableNotDisposedCsharp8(FileStream fs)
+        {
+            using var fs1 = new FileStream(@"c:\foo.txt", FileMode.Open); // Noncompliant FP
+            using var fs2 = File.Open(@"c:\foo.txt", FileMode.Open); // Noncompliant FP
+            using Stream fs3 = new FileStream(@"c:\foo.txt", FileMode.Open); // Noncompliant FP
+            using var s = new WebClient(); // Noncompliant FP
+        }
     }
 }

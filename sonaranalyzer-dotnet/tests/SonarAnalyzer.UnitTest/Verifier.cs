@@ -95,6 +95,21 @@ namespace SonarAnalyzer.UnitTest
             IEnumerable<ParseOptions> options = null, CompilationErrorBehavior checkMode = CompilationErrorBehavior.Default,
             IEnumerable<MetadataReference> additionalReferences = null)
         {
+            if (options == null)
+            {
+                if (path.EndsWith(".cs"))
+                {
+                    options = ParseOptionsHelper.FromCSharp8Preview;
+                }
+                else if (path.EndsWith(".vb"))
+                {
+                    options = ParseOptionsHelper.FromVisualBasic16;
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine($"unknown file extension for {path}");
+                }
+            }
             VerifyAnalyzer(new[] { path }, diagnosticAnalyzer, options, checkMode, additionalReferences);
         }
 
@@ -129,7 +144,22 @@ namespace SonarAnalyzer.UnitTest
             IEnumerable<MetadataReference> additionalReferences = null)
         {
             var solutionBuilder = SolutionBuilder.CreateSolutionFromPaths(paths, additionalReferences);
-
+            if (options == null)
+            {
+                var path = paths.FirstOrDefault();
+                if (path.EndsWith(".cs"))
+                {
+                    options = ParseOptionsHelper.FromCSharp8Preview;
+                }
+                else if (path.EndsWith(".vb"))
+                {
+                    options = ParseOptionsHelper.FromVisualBasic16;
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine($"unknown file extension for {path}");
+                }
+            }
             foreach (var compilation in solutionBuilder.Compile(options?.ToArray()))
             {
                 DiagnosticVerifier.Verify(compilation, diagnosticAnalyzer, checkMode);
@@ -157,7 +187,21 @@ namespace SonarAnalyzer.UnitTest
                 .AddReferences(additionalReferences)
                 .AddDocument(path);
 
-
+            if (options == null)
+            {
+                if (path.EndsWith(".cs"))
+                {
+                    options = ParseOptionsHelper.FromCSharp8Preview;
+                }
+                else if (path.EndsWith(".vb"))
+                {
+                    options = ParseOptionsHelper.FromVisualBasic16;
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine($"unknown file extension for {path}");
+                }
+            }
             if (options == null)
             {
                 var compilation = projectBuilder.GetCompilation(null);
@@ -177,6 +221,21 @@ namespace SonarAnalyzer.UnitTest
             SonarDiagnosticAnalyzer diagnosticAnalyzer, SonarCodeFixProvider codeFixProvider,
             IEnumerable<ParseOptions> options = null, IEnumerable<MetadataReference> additionalReferences = null)
         {
+            if (options == null)
+            {
+                if (path.EndsWith(".cs"))
+                {
+                    options = ParseOptionsHelper.FromCSharp8Preview;
+                }
+                else if (path.EndsWith(".vb"))
+                {
+                    options = ParseOptionsHelper.FromVisualBasic16;
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine($"unknown file extension for {path}");
+                }
+            }
             CodeFixVerifier.VerifyCodeFix(path, pathToExpected, pathToExpected, diagnosticAnalyzer, codeFixProvider,
                 null, options, additionalReferences);
         }
@@ -185,6 +244,21 @@ namespace SonarAnalyzer.UnitTest
             SonarDiagnosticAnalyzer diagnosticAnalyzer, SonarCodeFixProvider codeFixProvider,
             IEnumerable<ParseOptions> options = null, IEnumerable<MetadataReference> additionalReferences = null)
         {
+            if (options == null)
+            {
+                if (path.EndsWith(".cs"))
+                {
+                    options = ParseOptionsHelper.FromCSharp8Preview;
+                }
+                else if (path.EndsWith(".vb"))
+                {
+                    options = ParseOptionsHelper.FromVisualBasic16;
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine($"unknown file extension for {path}");
+                }
+            }
             CodeFixVerifier.VerifyCodeFix(path, pathToExpected, pathToBatchExpected, diagnosticAnalyzer, codeFixProvider,
                 null, options, additionalReferences);
         }
@@ -193,6 +267,21 @@ namespace SonarAnalyzer.UnitTest
             SonarDiagnosticAnalyzer diagnosticAnalyzer, SonarCodeFixProvider codeFixProvider, string codeFixTitle,
             IEnumerable<ParseOptions> options = null, IEnumerable<MetadataReference> additionalReferences = null)
         {
+            if (options == null)
+            {
+                if (path.EndsWith(".cs"))
+                {
+                    options = ParseOptionsHelper.FromCSharp8Preview;
+                }
+                else if (path.EndsWith(".vb"))
+                {
+                    options = ParseOptionsHelper.FromVisualBasic16;
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine($"unknown file extension for {path}");
+                }
+            }
             CodeFixVerifier.VerifyCodeFix(path, pathToExpected, pathToExpected, diagnosticAnalyzer, codeFixProvider,
                 codeFixTitle, options, additionalReferences);
         }

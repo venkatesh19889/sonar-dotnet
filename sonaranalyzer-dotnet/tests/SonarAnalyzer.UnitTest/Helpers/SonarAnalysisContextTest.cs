@@ -57,7 +57,7 @@ namespace SonarAnalyzer.UnitTest.Helpers
                 foreach (var testCase in this.TestCases)
                 {
                     // TODO: We should find a way to ack the fact the action was not run
-                    Verifier.VerifyNoIssueReported(testCase.Path, testCase.Analyzer);
+                    Verifier.VerifyNoIssueReported(testCase.Path, testCase.Analyzer, options : ParseOptionsHelper.FromCSharp8Preview);
                 }
             }
             finally
@@ -72,7 +72,7 @@ namespace SonarAnalyzer.UnitTest.Helpers
             foreach (var testCase in this.TestCases)
             {
                 // FIX ME: We test that a rule is enabled only by checking the issues are reported
-                Verifier.VerifyAnalyzer(testCase.Path, testCase.Analyzer);
+                Verifier.VerifyAnalyzer(testCase.Path, testCase.Analyzer, options: ParseOptionsHelper.FromCSharp8Preview);
             }
         }
 
@@ -85,8 +85,8 @@ namespace SonarAnalyzer.UnitTest.Helpers
             {
                 SonarAnalysisContext.ShouldExecuteRegisteredAction = (diags, tree) =>
                     tree.FilePath.EndsWith(new FileInfo(this.TestCases[0].Path).Name, System.StringComparison.OrdinalIgnoreCase);
-                Verifier.VerifyAnalyzer(this.TestCases[0].Path, this.TestCases[0].Analyzer);
-                Verifier.VerifyNoIssueReported(this.TestCases[1].Path, this.TestCases[1].Analyzer);
+                Verifier.VerifyAnalyzer(this.TestCases[0].Path, this.TestCases[0].Analyzer, options: ParseOptionsHelper.FromCSharp8Preview);
+                Verifier.VerifyNoIssueReported(this.TestCases[1].Path, this.TestCases[1].Analyzer, options: ParseOptionsHelper.FromCSharp8Preview);
             }
             finally
             {
@@ -118,11 +118,11 @@ namespace SonarAnalyzer.UnitTest.Helpers
                     {
                         if (testCase.Analyzer is AnonymousDelegateEventUnsubscribe)
                         {
-                            Verifier.VerifyNoIssueReported(testCase.Path, testCase.Analyzer);
+                            Verifier.VerifyNoIssueReported(testCase.Path, testCase.Analyzer, options: ParseOptionsHelper.FromCSharp8Preview);
                         }
                         else
                         {
-                            Verifier.VerifyAnalyzer(testCase.Path, testCase.Analyzer);
+                            Verifier.VerifyAnalyzer(testCase.Path, testCase.Analyzer, options: ParseOptionsHelper.FromCSharp8Preview);
                         }
                     }
                 }
