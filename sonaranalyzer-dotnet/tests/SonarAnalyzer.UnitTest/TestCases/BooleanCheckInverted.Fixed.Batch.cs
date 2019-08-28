@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace Tests.Diagnostics
 {
+#nullable enable
     public class BooleanCheckInverted
     {
         public void Test()
@@ -68,4 +69,5 @@ namespace Tests.Diagnostics
 
         public static bool IsNullOrEmpty4<T>(IList<T> collection) => collection?.Count != 0; // Fixed
     }
+#nullable restore
 }

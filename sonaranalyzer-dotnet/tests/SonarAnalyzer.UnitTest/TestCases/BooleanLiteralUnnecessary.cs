@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
+#nullable enable
 namespace Tests.Diagnostics
 {
     public class BooleanLiteralUnnecessary
@@ -134,3 +135,4 @@ namespace Tests.Diagnostics
         public bool? IsStateValid { get; set; }
     }
 }
+#nullable restore

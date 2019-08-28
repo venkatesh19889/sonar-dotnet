@@ -19,9 +19,14 @@
  */
 
 extern alias csharp;
+
+using System.Collections.Immutable;
+using System.IO;
 using csharp::SonarAnalyzer.Rules.CSharp;
+using Microsoft.CodeAnalysis;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SonarAnalyzer.UnitTest.TestFramework;
+using CS = Microsoft.CodeAnalysis.CSharp;
 
 namespace SonarAnalyzer.UnitTest.Rules
 {
@@ -32,10 +37,17 @@ namespace SonarAnalyzer.UnitTest.Rules
         [TestCategory("Rule")]
         public void DeadStores()
         {
+            var system = (MetadataReference)MetadataReference.CreateFromFile(
+                Path.Combine(@"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.0.0-preview8-28405-07\ref\netcoreapp3.0",
+                    "System.dll"));
+
+            var runtime = (MetadataReference)MetadataReference.CreateFromFile(
+                Path.Combine(@"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\3.0.0-preview8-28405-07\ref\netcoreapp3.0",
+                    "System.Runtime.dll"));
             Verifier.VerifyAnalyzer(@"TestCases\DeadStores.cs",
                 new DeadStores(),
-                options: ParseOptionsHelper.FromCSharp7,
-                additionalReferences: FrameworkMetadataReference.SystemWindowsForms);
+                options: new[] { new CS.CSharpParseOptions(CS.LanguageVersion.Preview) },
+                additionalReferences: new[] { system, runtime });
         }
     }
 }

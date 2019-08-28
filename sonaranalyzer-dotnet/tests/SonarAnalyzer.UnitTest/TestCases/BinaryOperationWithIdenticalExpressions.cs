@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Tests.TestCases
 {
+#nullable enable
     class Foo { }
 
     class BinaryOperationWithIdenticalExpressions
@@ -70,4 +71,5 @@ namespace Tests.TestCases
             i = i;
         }
     }
+#nullable restore
 }

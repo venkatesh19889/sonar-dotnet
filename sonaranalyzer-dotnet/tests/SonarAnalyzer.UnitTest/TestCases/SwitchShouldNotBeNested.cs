@@ -4,6 +4,19 @@ namespace Tests.Diagnostics
 {
     public class Program
     {
+        public string Foo(int input, double second) =>
+            input switch
+            {
+            1 => "a",
+            2 => "b",
+            3 => "c",
+            4 => second switch
+            {
+                1 => "d",
+                2 => "e"
+            }
+            };
+
         public Program(char choice, int value)
         {
             switch (choice)

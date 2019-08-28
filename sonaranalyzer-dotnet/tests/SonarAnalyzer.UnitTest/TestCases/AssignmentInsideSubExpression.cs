@@ -41,6 +41,9 @@ namespace Tests.Diagnostics
             foo(i >>= 1); // Noncompliant
 //                ^^^
 
+            int? nullable = 0;
+            foo(nullable ??= 1); // Noncompliant
+
             i = 42;
             foo(i == 42);
 
