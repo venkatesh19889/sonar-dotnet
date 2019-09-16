@@ -1271,6 +1271,27 @@ internal class B
             ValidateCodeGeneration(code);
         }
 
+        [TestMethod]
+        public void PrePostIncrementDecrement()
+        {
+            var code = @"
+class A
+{
+    private int p;
+
+    public int f(int i)
+    {
+        ++i;
+        i++;
+        --i;
+        i--;
+
+        return ++p;
+    }
+}
+";
+            ValidateCodeGeneration(code);
+        }
 
     } // Class
 
