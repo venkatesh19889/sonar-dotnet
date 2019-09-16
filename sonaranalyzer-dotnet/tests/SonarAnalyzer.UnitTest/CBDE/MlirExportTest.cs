@@ -1304,9 +1304,7 @@ class A
 }
 ";
             ValidateCodeGeneration(code);
-        }    
-
+        }   
     } // Class
 } // Namespace
-
 
