@@ -1272,12 +1272,33 @@ internal class B
         }
 
         [TestMethod]
+        public void ModifyFieldParameterAndLocalVariable()
+        {
+            var code = @"
+class A
+{
+    private int p;
+
+    public void f(int dim)
+    {
+        var b = true;
+        b = false;
+        dim = 2;
+        p = 3;
+    }
+}
+";
+            ValidateCodeGeneration(code);
+        }
+
+        [TestMethod]
         public void PrePostIncrementDecrement()
         {
             var code = @"
 class A
 {
     private int p;
+
 
     public int f(int i)
     {
@@ -1291,9 +1312,7 @@ class A
 }
 ";
             ValidateCodeGeneration(code);
-        }
-
-    } // Class
+        }    } // Class
 
 } // Namespace
 
