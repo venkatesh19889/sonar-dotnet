@@ -1278,6 +1278,7 @@ internal class B
 class A
 {
     private int p;
+
     public void f(int dim)
     {
         var b = true;
