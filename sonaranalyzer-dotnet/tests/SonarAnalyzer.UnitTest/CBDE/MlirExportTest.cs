@@ -1290,9 +1290,16 @@ class A
             ValidateCodeGeneration(code);
         }
 
+        [TestMethod]
+        public void PrePostIncrementDecrement()
+        {
+            var code = @"
+class A
+{
+    private long p;
+    private readonly int[] indices;
 
-
-    public int f(int i)
+    private long f(int i)
     {
         ++i;
         i++;
@@ -1301,10 +1308,16 @@ class A
 
         return ++p;
     }
+
+    private void g(int dim)
+    {
+         _indices[dimension]++;
+    }
 }
 ";
             ValidateCodeGeneration(code);
-        }   
+        }
+
     } // Class
 } // Namespace
 
