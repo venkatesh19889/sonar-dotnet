@@ -212,54 +212,66 @@ namespace Tests.Diagnostics
             }
         }
 
-    public void Method1(object obj)
-    {
-      switch (obj)
-      {
-        case string s1:
-          break;
-        default:
-          return;
-      }
-      var s = obj.ToString();
-    }
+        public void Method1(object obj)
+        {
+          switch (obj)
+          {
+            case string s1:
+              break;
+            default:
+              return;
+          }
+          var s = obj.ToString();
+        }
 
-    public void Method2(object obj)
-    {
-      switch (obj)
-      {
-        case null:
-          break;
-        default:
-          return;
-      }
-      var s1 = obj.ToString(); // Noncompliant
-    }
+        public void Method2(object obj)
+        {
+          switch (obj)
+          {
+            case null:
+              break;
+            default:
+              return;
+          }
+          var s1 = obj.ToString(); // Noncompliant
+        }
 
-    public void Method3(object obj)
-    {
-      obj = null;
-      switch (obj)
-      {
-        case string s1:
-          return;
-        default:
-          break;
-      }
-      var s = obj.ToString(); // Noncompliant
-    }
+        public void Method3(object obj)
+        {
+          obj = null;
+          switch (obj)
+          {
+            case string s1:
+              return;
+            default:
+              break;
+          }
+          var s = obj.ToString(); // Noncompliant
+        }
 
-    public void Method4(object obj)
-    {
-      obj = null;
-      switch (obj)
-      {
-        case null:
-          return;
-        default:
-          break;
-      }
-      var s = obj.ToString();
+        public void Method4(object obj)
+        {
+          obj = null;
+          switch (obj)
+          {
+            case null:
+              return;
+            default:
+              break;
+          }
+          var s = obj.ToString();
+        }
+
+        public int Method5<T>()
+        {
+            string s = null;
+            s.ToLower(); // Noncompliant
+            switch (typeof(T))
+            {
+                case var x when x == typeof(Foo): return 1;
+                case var x when x == typeof(string): return 2;
+                default: throw new InvalidOperationException();
+            }
+        }
     }
-  }
 }
