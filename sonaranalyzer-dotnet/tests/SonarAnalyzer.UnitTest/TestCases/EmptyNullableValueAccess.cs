@@ -141,4 +141,17 @@ namespace Tests.Diagnostics
         }
     }
 
+    class Csharp7
+    {
+        public int M(int a)
+        {
+            int? i = null;
+            switch (a)
+            {
+                case var x when x == i.Value: return x; // Noncompliant
+                default: throw new InvalidOperationException();
+            }
+        }
+    }
+
 }

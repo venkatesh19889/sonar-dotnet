@@ -21,7 +21,16 @@ namespace SonarAnalyzer.ShimLayer.CSharp
             = new ConcurrentDictionary<Type, ConcurrentDictionary<SyntaxKind, bool>>();
 
         public static bool SupportsCSharp7 { get; }
-            = Enum.GetNames(typeof(SyntaxKind)).Contains(nameof(SyntaxKindEx.IsPatternExpression));
+            = Enum.GetNames(typeof(LanguageVersion)).Contains(nameof(LanguageVersionEx.CSharp7));
+
+        public static bool SupportsCSharp71 { get; }
+            = Enum.GetNames(typeof(LanguageVersion)).Contains(nameof(LanguageVersionEx.CSharp7_1));
+
+        public static bool SupportsCSharp72 { get; }
+            = Enum.GetNames(typeof(LanguageVersion)).Contains(nameof(LanguageVersionEx.CSharp7_2));
+
+        public static bool SupportsCSharp73 { get; }
+            = Enum.GetNames(typeof(LanguageVersion)).Contains(nameof(LanguageVersionEx.CSharp7_3));
 
         internal static bool CanWrapNode(SyntaxNode node, Type underlyingType)
         {
@@ -53,22 +62,21 @@ namespace SonarAnalyzer.ShimLayer.CSharp
 
         internal static Func<TSyntax, TProperty> CreateSyntaxPropertyAccessor<TSyntax, TProperty>(Type type, string propertyName)
         {
-            Func<TSyntax, TProperty> fallbackAccessor =
-                syntax =>
+            TProperty FallbackAccessor(TSyntax syntax)
+            {
+                if (syntax == null)
                 {
-                    if (syntax == null)
-                    {
-                        // Unlike an extension method which would throw ArgumentNullException here, the light-up
-                        // behavior needs to match behavior of the underlying property.
-                        throw new NullReferenceException();
-                    }
+                    // Unlike an extension method which would throw ArgumentNullException here, the light-up
+                    // behavior needs to match behavior of the underlying property.
+                    throw new NullReferenceException();
+                }
 
-                    return default(TProperty);
-                };
+                return default(TProperty);
+            }
 
             if (type == null)
             {
-                return fallbackAccessor;
+                return FallbackAccessor;
             }
 
             if (!typeof(TSyntax).GetTypeInfo().IsAssignableFrom(type.GetTypeInfo()))
@@ -79,7 +87,7 @@ namespace SonarAnalyzer.ShimLayer.CSharp
             var property = type.GetTypeInfo().GetDeclaredProperty(propertyName);
             if (property == null)
             {
-                return fallbackAccessor;
+                return FallbackAccessor;
             }
 
             if (!typeof(TProperty).GetTypeInfo().IsAssignableFrom(property.PropertyType.GetTypeInfo()))
@@ -102,22 +110,21 @@ namespace SonarAnalyzer.ShimLayer.CSharp
 
         internal static Func<TSyntax, SeparatedSyntaxListWrapper<TProperty>> CreateSeparatedSyntaxListPropertyAccessor<TSyntax, TProperty>(Type type, string propertyName)
         {
-            Func<TSyntax, SeparatedSyntaxListWrapper<TProperty>> fallbackAccessor =
-                syntax =>
+            SeparatedSyntaxListWrapper<TProperty> FallbackAccessor(TSyntax syntax)
+            {
+                if (syntax == null)
                 {
-                    if (syntax == null)
-                    {
-                        // Unlike an extension method which would throw ArgumentNullException here, the light-up
-                        // behavior needs to match behavior of the underlying property.
-                        throw new NullReferenceException();
-                    }
+                    // Unlike an extension method which would throw ArgumentNullException here, the light-up
+                    // behavior needs to match behavior of the underlying property.
+                    throw new NullReferenceException();
+                }
 
-                    return SeparatedSyntaxListWrapper<TProperty>.UnsupportedEmpty;
-                };
+                return SeparatedSyntaxListWrapper<TProperty>.UnsupportedEmpty;
+            }
 
             if (type == null)
             {
-                return fallbackAccessor;
+                return FallbackAccessor;
             }
 
             if (!typeof(TSyntax).GetTypeInfo().IsAssignableFrom(type.GetTypeInfo()))
@@ -128,7 +135,7 @@ namespace SonarAnalyzer.ShimLayer.CSharp
             var property = type.GetTypeInfo().GetDeclaredProperty(propertyName);
             if (property == null)
             {
-                return fallbackAccessor;
+                return FallbackAccessor;
             }
 
             if (property.PropertyType.GetGenericTypeDefinition() != typeof(SeparatedSyntaxList<>))
@@ -152,7 +159,7 @@ namespace SonarAnalyzer.ShimLayer.CSharp
 
             var unboundWrapperType = typeof(SeparatedSyntaxListWrapper<>.AutoWrapSeparatedSyntaxList<>);
             var boundWrapperType = unboundWrapperType.MakeGenericType(typeof(TProperty), propertySyntaxType);
-            var constructorInfo = boundWrapperType.GetTypeInfo().DeclaredConstructors.Single();
+            var constructorInfo = boundWrapperType.GetTypeInfo().DeclaredConstructors.Single(constructor => constructor.GetParameters().Length == 1);
 
             Expression<Func<TSyntax, SeparatedSyntaxListWrapper<TProperty>>> expression =
                 Expression.Lambda<Func<TSyntax, SeparatedSyntaxListWrapper<TProperty>>>(
@@ -163,27 +170,26 @@ namespace SonarAnalyzer.ShimLayer.CSharp
 
         internal static Func<TSyntax, TProperty, TSyntax> CreateSyntaxWithPropertyAccessor<TSyntax, TProperty>(Type type, string propertyName)
         {
-            Func<TSyntax, TProperty, TSyntax> fallbackAccessor =
-                (syntax, newValue) =>
+            TSyntax FallbackAccessor(TSyntax syntax, TProperty newValue)
+            {
+                if (syntax == null)
                 {
-                    if (syntax == null)
-                    {
-                        // Unlike an extension method which would throw ArgumentNullException here, the light-up
-                        // behavior needs to match behavior of the underlying property.
-                        throw new NullReferenceException();
-                    }
+                    // Unlike an extension method which would throw ArgumentNullException here, the light-up
+                    // behavior needs to match behavior of the underlying property.
+                    throw new NullReferenceException();
+                }
 
-                    if (Equals(newValue, default(TProperty)))
-                    {
-                        return syntax;
-                    }
+                if (Equals(newValue, default(TProperty)))
+                {
+                    return syntax;
+                }
 
-                    throw new NotSupportedException();
-                };
+                throw new NotSupportedException();
+            }
 
             if (type == null)
             {
-                return fallbackAccessor;
+                return FallbackAccessor;
             }
 
             if (!typeof(TSyntax).GetTypeInfo().IsAssignableFrom(type.GetTypeInfo()))
@@ -194,7 +200,7 @@ namespace SonarAnalyzer.ShimLayer.CSharp
             var property = type.GetTypeInfo().GetDeclaredProperty(propertyName);
             if (property == null)
             {
-                return fallbackAccessor;
+                return FallbackAccessor;
             }
 
             if (!typeof(TProperty).GetTypeInfo().IsAssignableFrom(property.PropertyType.GetTypeInfo()))
@@ -203,7 +209,11 @@ namespace SonarAnalyzer.ShimLayer.CSharp
             }
 
             var methodInfo = type.GetTypeInfo().GetDeclaredMethods("With" + propertyName)
-                .Single(m => !m.IsStatic && m.GetParameters().Length == 1 && m.GetParameters()[0].ParameterType.Equals(property.PropertyType));
+                .SingleOrDefault(m => !m.IsStatic && m.GetParameters().Length == 1 && m.GetParameters()[0].ParameterType.Equals(property.PropertyType));
+            if (methodInfo is null)
+            {
+                return FallbackAccessor;
+            }
 
             var syntaxParameter = Expression.Parameter(typeof(TSyntax), "syntax");
             var valueParameter = Expression.Parameter(typeof(TProperty), methodInfo.GetParameters()[0].Name);
@@ -226,27 +236,26 @@ namespace SonarAnalyzer.ShimLayer.CSharp
 
         internal static Func<TSyntax, SeparatedSyntaxListWrapper<TProperty>, TSyntax> CreateSeparatedSyntaxListWithPropertyAccessor<TSyntax, TProperty>(Type type, string propertyName)
         {
-            Func<TSyntax, SeparatedSyntaxListWrapper<TProperty>, TSyntax> fallbackAccessor =
-                (syntax, newValue) =>
+            TSyntax FallbackAccessor(TSyntax syntax, SeparatedSyntaxListWrapper<TProperty> newValue)
+            {
+                if (syntax == null)
                 {
-                    if (syntax == null)
-                    {
-                        // Unlike an extension method which would throw ArgumentNullException here, the light-up
-                        // behavior needs to match behavior of the underlying property.
-                        throw new NullReferenceException();
-                    }
+                    // Unlike an extension method which would throw ArgumentNullException here, the light-up
+                    // behavior needs to match behavior of the underlying property.
+                    throw new NullReferenceException();
+                }
 
-                    if (newValue is null)
-                    {
-                        return syntax;
-                    }
+                if (newValue is null)
+                {
+                    return syntax;
+                }
 
-                    throw new NotSupportedException();
-                };
+                throw new NotSupportedException();
+            }
 
             if (type == null)
             {
-                return fallbackAccessor;
+                return FallbackAccessor;
             }
 
             if (!typeof(TSyntax).GetTypeInfo().IsAssignableFrom(type.GetTypeInfo()))
@@ -257,7 +266,7 @@ namespace SonarAnalyzer.ShimLayer.CSharp
             var property = type.GetTypeInfo().GetDeclaredProperty(propertyName);
             if (property == null)
             {
-                return fallbackAccessor;
+                return FallbackAccessor;
             }
 
             if (property.PropertyType.GetGenericTypeDefinition() != typeof(SeparatedSyntaxList<>))

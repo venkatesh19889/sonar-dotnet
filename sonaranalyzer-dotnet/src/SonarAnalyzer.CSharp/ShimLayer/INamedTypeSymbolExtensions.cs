@@ -15,11 +15,13 @@ namespace SonarAnalyzer.ShimLayer.CSharp
     {
         private static readonly Func<INamedTypeSymbol, INamedTypeSymbol> TupleUnderlyingTypeAccessor;
         private static readonly Func<INamedTypeSymbol, ImmutableArray<IFieldSymbol>> TupleElementsAccessor;
+        private static readonly Func<INamedTypeSymbol, bool> IsSerializableAccessor;
 
         static INamedTypeSymbolExtensions()
         {
             TupleUnderlyingTypeAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<INamedTypeSymbol, INamedTypeSymbol>(typeof(INamedTypeSymbol), nameof(TupleUnderlyingType));
             TupleElementsAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<INamedTypeSymbol, ImmutableArray<IFieldSymbol>>(typeof(INamedTypeSymbol), nameof(TupleElements));
+            IsSerializableAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<INamedTypeSymbol, bool>(typeof(INamedTypeSymbol), nameof(IsSerializable));
         }
 
         public static INamedTypeSymbol TupleUnderlyingType(this INamedTypeSymbol symbol)
@@ -30,6 +32,11 @@ namespace SonarAnalyzer.ShimLayer.CSharp
         public static ImmutableArray<IFieldSymbol> TupleElements(this INamedTypeSymbol symbol)
         {
             return TupleElementsAccessor(symbol);
+        }
+
+        public static bool IsSerializable(this INamedTypeSymbol symbol)
+        {
+            return IsSerializableAccessor(symbol);
         }
     }
 }

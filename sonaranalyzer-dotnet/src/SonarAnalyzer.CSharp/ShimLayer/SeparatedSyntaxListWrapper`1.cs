@@ -10,6 +10,7 @@ namespace SonarAnalyzer.ShimLayer.CSharp
     using System;
     using System.Collections;
     using System.Collections.Generic;
+    using System.Collections.Immutable;
     using System.ComponentModel;
     using System.Linq;
     using Microsoft.CodeAnalysis;
@@ -55,11 +56,19 @@ namespace SonarAnalyzer.ShimLayer.CSharp
 
         public static bool operator ==(SeparatedSyntaxListWrapper<TNode> left, SeparatedSyntaxListWrapper<TNode> right)
         {
+            // Currently unused
+            _ = left;
+            _ = right;
+
             throw new NotImplementedException();
         }
 
         public static bool operator !=(SeparatedSyntaxListWrapper<TNode> left, SeparatedSyntaxListWrapper<TNode> right)
         {
+            // Currently unused
+            _ = left;
+            _ = right;
+
             throw new NotImplementedException();
         }
 
@@ -225,6 +234,11 @@ namespace SonarAnalyzer.ShimLayer.CSharp
             where TSyntax : SyntaxNode
         {
             private readonly SeparatedSyntaxList<TSyntax> syntaxList;
+
+            public AutoWrapSeparatedSyntaxList()
+                : this(default(SeparatedSyntaxList<TSyntax>))
+            {
+            }
 
             public AutoWrapSeparatedSyntaxList(SeparatedSyntaxList<TSyntax> syntaxList)
             {
