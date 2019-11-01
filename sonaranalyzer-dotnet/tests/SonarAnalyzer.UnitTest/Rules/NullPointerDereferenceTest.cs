@@ -93,7 +93,7 @@ public static class Utils
         {
             Verifier.VerifyAnalyzer(@"TestCases\NullPointerDereferenceCSharp8.cs",
                 new NullPointerDereference(),
-                ParseOptionsHelper.FromCSharp7);
+                ParseOptionsHelper.FromCSharp8);
         }
     }
 }
