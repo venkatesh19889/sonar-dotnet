@@ -86,5 +86,14 @@ public static class Utils
                 new NullPointerDereference(),
                 ParseOptionsHelper.FromCSharp7);
         }
+
+        [TestMethod]
+        [TestCategory("Rule")]
+        public void NullPointerDereference_CSharp8()
+        {
+            Verifier.VerifyAnalyzer(@"TestCases\NullPointerDereferenceCSharp8.cs",
+                new NullPointerDereference(),
+                ParseOptionsHelper.FromCSharp7);
+        }
     }
 }
