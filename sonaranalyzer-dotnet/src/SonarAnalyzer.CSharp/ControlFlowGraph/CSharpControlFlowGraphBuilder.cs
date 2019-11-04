@@ -468,6 +468,9 @@ namespace SonarAnalyzer.ControlFlowGraph.CSharp
 
                     return BuildExpression(isPatternExpression.Expression, currentBlock);
 
+                case SyntaxKindEx.SwitchExpression:
+                    return BuildSwitchExpression((SwitchExpressionSyntaxWrapper)expression, currentBlock);
+
                 default:
                     throw new NotSupportedException($"{expression.Kind()}");
             }
@@ -722,12 +725,40 @@ namespace SonarAnalyzer.ControlFlowGraph.CSharp
                 s.Labels.Any(l => l.IsKind(SyntaxKind.DefaultSwitchLabel));
         }
 
+        private Block BuildSwitchExpression(SwitchExpressionSyntaxWrapper switchExpressionSyntax, Block currentBlock)
+        {
+            var currentArmBlock = currentBlock;
+
+            foreach (var arm in switchExpressionSyntax.Arms.Reverse())
+            {
+                var armBlock = BuildExpression(arm.Expression, CreateBlock(currentBlock));
+
+                currentArmBlock = BuildArmBranch(arm, armBlock, currentArmBlock);
+            }
+
+            return BuildExpression(switchExpressionSyntax.GoverningExpression, currentArmBlock);
+        }
+
+        private Block BuildArmBranch(SwitchExpressionArmSyntaxWrapper switchExpressionArmSyntax, Block trueSuccessor, Block falseSuccessor)
+        {
+            var newTrueSuccessor = CreateWhenCloseNewTrueSuccessor(switchExpressionArmSyntax.WhenClause, trueSuccessor, falseSuccessor);
+
+            var currentBlock = CreateCurrentBlock(switchExpressionArmSyntax, newTrueSuccessor, falseSuccessor);
+
+            currentBlock.ReversedInstructions.Add(switchExpressionArmSyntax.Pattern);
+
+            return currentBlock;
+        }
+
+        private Block CreateCurrentBlock(SwitchExpressionArmSyntaxWrapper switchExpressionArmSyntax, Block trueSuccessor, Block falseSuccessor) =>
+            switchExpressionArmSyntax.Pattern.SyntaxNode.IsKind(SyntaxKindEx.DiscardPattern)
+                ? CreateBlock(trueSuccessor)
+                : (Block)CreateBinaryBranchBlock(switchExpressionArmSyntax, trueSuccessor, falseSuccessor);
+
         private Block BuildCasePattern(CasePatternSwitchLabelSyntaxWrapper casePatternSwitchLabel,
             Block trueSuccessor, Block falseSuccessor)
         {
-            var newTrueSuccessor = casePatternSwitchLabel.WhenClause.SyntaxNode != null
-                ? BuildCondition(casePatternSwitchLabel.WhenClause.Condition, trueSuccessor, falseSuccessor)
-                : trueSuccessor;
+            var newTrueSuccessor = CreateWhenCloseNewTrueSuccessor(casePatternSwitchLabel.WhenClause, trueSuccessor, falseSuccessor);
 
             var currentBlock = CreateBinaryBranchBlock(casePatternSwitchLabel, newTrueSuccessor, falseSuccessor);
 
@@ -735,6 +766,11 @@ namespace SonarAnalyzer.ControlFlowGraph.CSharp
 
             return currentBlock;
         }
+
+        private Block CreateWhenCloseNewTrueSuccessor(WhenClauseSyntaxWrapper whenClauseSyntax, Block trueSuccessor, Block falseSuccessor) =>
+           whenClauseSyntax.SyntaxNode != null
+               ? BuildCondition(whenClauseSyntax.Condition, trueSuccessor, falseSuccessor)
+               : trueSuccessor;
 
         private object GetCaseIndexer(ExpressionSyntax expression)
         {

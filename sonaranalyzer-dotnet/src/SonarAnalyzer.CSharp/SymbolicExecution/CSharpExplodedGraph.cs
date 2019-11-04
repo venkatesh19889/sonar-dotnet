@@ -348,7 +348,7 @@ namespace SonarAnalyzer.SymbolicExecution
                 case SyntaxKind.NullLiteralExpression:
                     newProgramState = newProgramState.PushValue(SymbolicValue.Null);
                     break;
-
+                     
                 case SyntaxKind.ThisExpression:
                     newProgramState = newProgramState.PushValue(SymbolicValue.This);
                     break;
@@ -522,6 +522,16 @@ namespace SonarAnalyzer.SymbolicExecution
                 case SyntaxKindEx.ConstantPattern:
                     // The 0 in 'case 0 when ...'
                     // Do nothing
+
+                    var pattern = (ConstantPatternSyntaxWrapper)instruction;
+                    if (pattern.Expression.IsKind(SyntaxKind.NullLiteralExpression))
+                    {
+                        newProgramState = newProgramState.PushValue(SymbolicValue.Null);
+                    }
+
+                    break;
+
+                case SyntaxKindEx.DiscardPattern:
                     break;
 
                 default:
