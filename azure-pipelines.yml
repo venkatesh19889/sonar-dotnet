@@ -280,3 +280,8 @@ stages:
     - job: runJavaIntegrationTests
       displayName: 'Run Java Integration Tests'
       dependsOn: runJavaBuild
+
+- template: promote-stage.yml@commonTemplates
+  parameters:
+    stageDependencies:
+    - qa      
